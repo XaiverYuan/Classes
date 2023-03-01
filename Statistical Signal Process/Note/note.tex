@@ -28,18 +28,28 @@ This has to be true for \textit{all} values\\
 This estimation \textit{does not always} exists
 \subsubsection{Minimum Variance}
 For whatever $\theta$, the variance has to be minimum, which also makes this not always satisfiable.\\
+
 \section{Cramer Rao Lower Bound}
-Prerequisite:\\
-$\hat{\theta}$ is unbiased
+Prerequisite \textbf{for calculating the lower bound}:\\
+
+
+$$E[\hat{\theta}]=\theta$$
+
+Prerequisite \textbf{for find the MVU or when the variance achieve the lower bound}:
+$$\exists, I(\theta),s.t. \frac{\partial \ln p(\bm(x);\theta)}{\partial \theta}=I(\theta)(\hat{\theta}-\theta)$$
+
 
 Conclusion:\\
 For a scalar estimator, the minimum variance it could achieve is :$$ Var(\hat{\theta})\geq \frac{1}{E[(\frac{\partial \ln{p(\bm{x};\theta)}}{\partial \theta})^2]}=\frac{1}{-E[\frac{\partial^2 \ln{p(\bm{x};\theta)}}{\partial^2 \theta}]}  $$
 % 具体证明请看第二章16页起
+If the lowerbound exists, $$ I(\theta)=-E[\frac{\partial^2\ln p(\bm{x};\theta)}{\partial\theta^2}] $$
 \subsection{Tips}
 \begin{itemize}
-    \item if an estimator has same variance as CRLB, then it is called \textbf{Fully Efficient}
-    \item if an estimator $\hat{A}$is fully efficient for a parameter $A$, and another parameter $B$ is linear to it(i.e.$B=3A+1$). The linear transformed estimator (i.e.$3\hat{A}+1$)will be fully efficient for $B$ too
+    \item if an estimator has same variance as CRLB, then it is called \textbf{Fully Efficient}%有效估计量
+    \item if an estimator $\hat{A}$ is fully efficient for a parameter $A$, and another parameter $B$ is linear to it(i.e.$B=3A+1$). The linear transformed estimator (i.e.$3\hat{A}+1$)will be fully efficient for $B$ too
     \item However, if $A=B^2$ and $\hat{A}$ is fully efficient for $A$, $\hat{B}^2$ is NOT fully efficient for $B$. It is actually not even unbiased. It is called asymptotic unbiasedness.This is the case for both mean and variance
 \end{itemize}
 \end{document}
 
+
+\section{}
