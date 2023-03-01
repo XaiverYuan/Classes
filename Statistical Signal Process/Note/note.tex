@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{ctex}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{ulem}
+\usepackage{amsmath}
+\title{Statistical Signal Processing}
+\author{袁宜桢}
+\date{Febrary 28, 2023}
+
+\begin{document}
+\maketitle
+\section{Basic}
+\subsection{Mean Square Error}
+$$ MSE(\hat{\theta})=E[(\hat{\theta}-\theta)^2] $$
+$$ =E[(\hat{\theta}-E[\hat{\theta}]+E[\hat{\theta}]-\theta)^2] $$
+$$ =E[((\hat{\theta}-E[\hat{\theta}])^2-2(\hat{\theta}-E[\hat{\theta}])(E[\hat{\theta
+}]-\theta)+(E[\hat{\theta}]-\theta))^2] $$
+As you may notice, since the Expectation of sum is same as the sum of expectation, so the second term becomes
+$E[2(\hat{\theta}-E[\hat{\theta}])(E[\hat{\theta}]-\theta)]$, and since $(E[\hat{\theta}]-\theta)$ is constant, so we can move it out which becomes$(2E[\hat{\theta}]-\theta)E[(\hat{\theta}-E[\hat{\theta}])]$. And $E[(\hat{\theta}-E[\hat{\theta}])]=0$
+$$ =var(\hat{\theta})+(bias(\theta))^2 $$
+\subsection{Minimum Variance Unbiased}
+\subsubsection{Unbiased}
+Definition:
+$$ E[\hat{\theta}=\theta],\theta\in (a,b) $$
+This has to be true for \textit{all} values\\
+This estimation \textit{does not always} exists
+\subsubsection{Minimum Variance}
+For whatever $\theta$, the variance has to be minimum, which also makes this not always satisfiable.\\
+\section{Cramer Rao Lower Bound}
+Prerequisite:\\
+$\hat{\theta}$ is unbiased
+
+Conclusion:\\
+For a scalar estimator, the minimum variance it could achieve is :$$ Var(\hat{\theta})\geq \frac{1}{E[(\frac{\partial \ln{p(\bm{x};\theta)}}{\partial \theta})^2]}=\frac{1}{-E[\frac{\partial^2 \ln{p(\bm{x};\theta)}}{\partial^2 \theta}]}  $$
+% 具体证明请看第二章16页起
+\subsection{Tips}
+\begin{itemize}
+    \item if an estimator has same variance as CRLB, then it is called \textbf{Fully Efficient}
+    \item if an estimator $\hat{A}$is fully efficient for a parameter $A$, and another parameter $B$ is linear to it(i.e.$B=3A+1$). The linear transformed estimator (i.e.$3\hat{A}+1$)will be fully efficient for $B$ too
+    \item However, if $A=B^2$ and $\hat{A}$ is fully efficient for $A$, $\hat{B}^2$ is NOT fully efficient for $B$. It is actually not even unbiased. It is called asymptotic unbiasedness.This is the case for both mean and variance
+\end{itemize}
+\end{document}
+
