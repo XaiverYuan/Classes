@@ -2,8 +2,10 @@ import os
 import torch
 import numpy as np
 
+PROJECTADDRESS='D:\WINDOWS_DOCUMENTS\GitHub\Classes\StatisticalSignalProcess\Project2'
+
 # OracleData文件夹位置
-ADDRESS = r"C:\Users\96585\Documents\GitHub\Classes\StatisticalSignalProcess\Project2\OracleData"
+DATAADDRESS = os.path.join(PROJECTADDRESS, 'OracleData')
 
 # 2060实测可以
 DEVICE = 'cuda'
@@ -19,7 +21,7 @@ def readFile(fileAddress: str, device: str = DEVICE) -> torch.Tensor:
 
 
 # 读取文件
-data1 = readFile(os.path.join(ADDRESS, 'data1.csv'))
+data1 = readFile(os.path.join(DATAADDRESS, 'data1.csv'))
 
 # 计算重力加速度，也可以手工设置
 g = data1[:, 0].mean()
