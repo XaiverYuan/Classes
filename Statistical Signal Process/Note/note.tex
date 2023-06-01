@@ -20,6 +20,12 @@ $$ =E[((\hat{\theta}-E[\hat{\theta}])^2-2(\hat{\theta}-E[\hat{\theta}])(E[\hat{\
 As you may notice, since the Expectation of sum is same as the sum of expectation, so the second term becomes
 $E[2(\hat{\theta}-E[\hat{\theta}])(E[\hat{\theta}]-\theta)]$, and since $(E[\hat{\theta}]-\theta)$ is constant, so we can move it out which becomes$(2E[\hat{\theta}]-\theta)E[(\hat{\theta}-E[\hat{\theta}])]$. And $E[(\hat{\theta}-E[\hat{\theta}])]=0$
 $$ =var(\hat{\theta})+(bias(\theta))^2 $$
+Intuitively, the Mean Square Error of an estimator is the square of the bias
+,which make sense that if a estimator is biased itself then the error will not be small.
+And since the estimator is not a constant, its variance will also influence the MSE,
+which contributes to make more error.
+
+
 \subsection{Minimum Variance Unbiased}
 \subsubsection{Unbiased}
 Definition:
