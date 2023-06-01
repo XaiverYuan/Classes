@@ -1,0 +1,83 @@
+%search QUESTION
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{ctex}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{ulem}
+\usepackage{amsmath}
+\title{统计信号处理HW4}
+\author{袁宜桢}
+\date{March 15, 2023}
+
+\begin{document}
+\maketitle
+
+\section{4.1}
+套用线性模型公式
+$$ \bm{x}=\bm{H\theta}+\bm{w} $$
+则$$ \hat{\theta}\sim N((\bm{H}^T\bm{H})^{-1}\bm{H}^T\bm{x},\sigma^2(\bm{H}^T\bm{H})^{-1}) $$
+其中，在我们这道题中$$H=\left[\begin{array}{cc}
+   1  & -1 \\
+   1  & 1  \\
+   \vdots  & \vdots \\
+   1  & -1 \\
+   1  & 1  \\
+\end{array}\right]$$
+$$ \bm{H}^T\bm{H}=\left[ \begin{array}{cc}
+   N  & 0 \\
+   0  & N
+\end{array} \right] $$
+
+$$ (\bm{H}^T\bm{H})^{-1}=\left[ \begin{array}{cc}
+   \frac{1}{N}  & 0 \\
+   0  & \frac{1}{N}
+\end{array} \right] $$
+
+$$ (\bm{H}^T\bm{H})^{-1}\bm{H}^T=\left[ \begin{array}{cccc}
+   \frac{1}{N}  & \frac{1}{N} &\cdots &\frac{1}{N}  \\
+   -\frac{1}{N}  & \frac{1}{N}&\cdots &\frac{1}{N}
+\end{array} \right] $$
+$$ \therefore \hat{\theta}=\left[ \begin{array}{cccc}
+   \frac{1}{N}  & \frac{1}{N} &\cdots &\frac{1}{N}  \\
+   -\frac{1}{N}  & \frac{1}{N}&\cdots &\frac{1}{N}
+\end{array} \right]\bm{x}  $$
+$$ Cov(\hat{\theta})=\left[ \begin{array}{cc}
+   \frac{\sigma^2}{N}  & 0 \\
+   0  & \frac{\sigma^2}{N}
+\end{array} \right] $$
+\section{4.14}
+刚开始没看明白这个题目，去看了下答案，但是即使现在我还是觉得挺离谱的，就是正常不应该是衰落的概率是$\epsilon$，然后我们不知道它什么时候衰落，然后我们算期望啊什么的，虽然这样会更难，但是更intuitive？然后题目突然来一个要么不衰落，衰落就在M轮...？
+
+看明白它的意思，我就可以自己写了
+$$ \hat{A} = (\bm{H}^T\bm{H})^{-1}\bm{H}^T\bm{x} $$
+\subsection{不衰落}
+$$\bm{H}=\left[ 1,1,1,\cdots,1,1\right]^T$$
+$$ \hat{A}=\frac{1}{N} \sum_{n=0}^{N-1}x[n]$$
+\subsection{衰落} $$\bm{H}=\left[ 1,1,1\cdots,1,0,\cdots,0 \right]^T$$，其中M个1，N-M个0，
+这里其实就相当于后面的数据被抹除了，就计算了前M个，intuitively，这也合理
+$$ \hat{A}=\frac{1}{M} \sum_{n=0}^{M-1}x[n]$$
+\subsection{方差}
+$$ C_{\hat{\theta}}=\sigma^2E_H[(\bm{H}^T\bm{H})^{-1}]=\sigma^2(\epsilon*\frac{1}{M}+(1-\epsilon)*{\frac{1}{N}}) $$
+而没有衰落的方差是$ \sigma^2*\frac{1}{N}=\sigma^2(\epsilon*\frac{1}{N}+(1-\epsilon)\frac{1}{N}) $
+因为N大于M，所以有衰落的方差更大，这个其实很好理解，如果epsilon是1，它铁定衰落，那么个数少了，方差变大，而如果epsilon不是1，不衰减的时候一样，衰减的时候变烂，那么总的还是变烂
+\section{6.4}
+无论在那种情况下，$x$的均值都和$\mu$相同，所以$\bm{s}=[1,1,\cdots,1]^T$，而$ C $是对角矩阵，则
+$$E[\hat{\theta}]= \frac{\bm{s^T}\bm{C}^{-1}E(x)}{\bm{s}^T\bm{C}^{-1}\bm{s}}=E[x] $$
+在高斯分布的情况下，加的是高斯噪音，但是在拉普拉斯的情况下加的并不是高斯噪音（PPT4-25），所以高斯的BLUE是MVU，且是有效估计量，而另一个不是
+\section{6.9}
+
+在本题中，如果没有额外说明，则$\sum$均指代$\sum_{n=0}^{N-1}$
+$$ \bm{H}=[\cos(0),\cos(2\pi f_1),\cos(4\pi f_1),\cdots,\cos(2\pi f_1n)]^T $$
+$$ Cov(\hat{\theta})=\sigma^2\bm{I} $$
+$$ \bm{H}^T\bm{C}^{-1}\bm{H}=\frac{1}{\sigma^2} \sum\cos^2(2\pi f_1 n)$$
+$$ \bm{H}^T\bm{C}^{-1}\bm{x}=\frac{1}{\sigma^2} \sum\cos(2\pi f_1 n)x[n]$$
+$$ \therefore \hat{\theta}=\frac{\sum\cos(2\pi f_1 n)x[n]}{\sum\cos^2(2\pi f_1 n)} $$
+$$ \bm{C}_{\hat{\theta}}=(\bm{H}^T\bm{C}^{-1}\bm{H})^{-1}=\frac{\sigma^2}{\sum\cos^2(2\pi f_1 n) }$$
+只有当$f_1$等于整数时，上述方差才会等于CRLB界，所以最好$f_1$取0.\\
+我也觉得，那我也好算很多，搞半天不还是最简单的最有效
+\section{6.14}
+$$ p(w[n])=(1-\epsilon)N(0,\sigma_B^2)+\epsilon N(0,\sigma^2_I) $$
+$$ \therefore Var(p(w[n]))=(1-\epsilon)\sigma_B^2+\epsilon\sigma_I^2 $$
+\end{document}
+

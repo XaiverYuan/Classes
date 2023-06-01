@@ -3,7 +3,7 @@ import torch
 import numpy as np
 
 # OracleData文件夹位置
-ADDRESS = r"D:\WINDOWS_DOCUMENTS\WPSDrive\1169688214\WPS云盘\2023春\统计信号处理\大作业2\OracleData"
+ADDRESS = r"OracleData"
 
 # 2060实测可以
 DEVICE = 'cuda'
@@ -25,6 +25,7 @@ data2 = readFile(os.path.join(ADDRESS, 'data2.csv'))
 # 计算重力加速度，也可以手工设置
 g = data1[:,0].mean()
 print('G = %.2f' % g)
+
 # 计算sigma
 forceSigma = data1[:,0].std()
 degreeSigma = data1[:, 1:].std()
@@ -36,3 +37,7 @@ dataAnon = data2.reshape(data2.shape[0] // 2, 8)
 trainingData = dataAnon[:, :4]
 testingData = dataAnon[:, 4:]
 del dataAnon, data2
+
+# 蒙特卡洛仿真
+torch.normal(0,forceSigma)
+
