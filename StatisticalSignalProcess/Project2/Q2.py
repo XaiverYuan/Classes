@@ -3,11 +3,12 @@ import torch
 import h5py
 import numpy as np
 import os
-from Initialize import PROJECTADDRESS,DEVICE
+from Initialize import PROJECTADDRESS, DEVICE,classifier
 
 # 定位一些路径
-H5FILEADDRESS=os.path.join(PROJECTADDRESS,'OracleData','playground1','imu.h5')
-REPORTADDRESS=os.path.join(*[PROJECTADDRESS,'Result'])
+H5FILEADDRESS = os.path.join(PROJECTADDRESS, 'OracleData', 'playground1', 'imu.h5')
+# H5FILEADDRESS = os.path.join(PROJECTADDRESS, 'OracleData', 'apple3', 'imu.h5')
+REPORTADDRESS = os.path.join(*[PROJECTADDRESS, 'Result'])
 
 # 设置一些基本常数
 g = 9.82872200
@@ -28,35 +29,28 @@ movingData[:, 0] = (rawDataForce[:, 0] ** 2 + rawDataForce[:, 1] ** 2 + rawDataF
 movingData[:, 1:] = rawDataDegree
 del rawDataDegree, rawDataForce
 # 考虑到视频中有一部分是静止的，所以将前后部分信息截去
-movingData = movingData[10000:20000]# 由于已经是真实数据，就不再仿真了
+movingData = movingData[10000:20000]  # 由于已经是真实数据，就不再仿真了
 
-movingData=movingData.to(DEVICE)
+movingData = movingData.to(DEVICE)
 
 # 蒙特卡洛10000个数据（基于data1的sigma）
-rawDataForce = torch.normal(g, forceSigma, (10000, 1))
-rawDataDegree = torch.normal(0, degreeSigma, (10000, 3))
+NOISE = 1
+rawDataForce = torch.normal(g, forceSigma * NOISE, (10000, 1))
+rawDataDegree = torch.normal(0, degreeSigma * NOISE, (10000, 3))
 stableData = torch.zeros((rawDataDegree.shape[0], 4))
 stableData[:, 0] = rawDataForce[0]
 stableData[:, 1:] = rawDataDegree
 del rawDataDegree, rawDataForce
 
-stableData=stableData.to(DEVICE)
+stableData = stableData.to(DEVICE)
 
-def classifier(data: torch.tensor, forceGamma: float, degreeGamma: float) -> torch.tensor:
-    """
-    给定数据和门限，判断哪些数据符合所有条件
-    :param data: 待鉴定数据
-    :param forceGamma: 受力与g之间差距的极限容忍值
-    :param degreeGamma: 最大角速度绝对值的极限容忍值
-    :return: 一个布尔张量，测量了数据是否符合条件
-    """
-    # 判定受力是否符合条件
-    forceAccept = torch.bitwise_and(data[:, 0] < g + forceGamma, data[:, 0] > g - forceGamma)
-    # 获取最大角速度
-    maxDegree = torch.max(torch.abs(data[:, 1:]), 1)[0]
-    # 判定角速度是否符合条件
-    degreeAccept = torch.bitwise_and(maxDegree < degreeGamma, maxDegree > -degreeGamma)
-    return torch.bitwise_and(forceAccept, degreeAccept)
+# 控制窗口
+movingData = movingData.reshape(5000, 2, -1)
+movingData = torch.mean(movingData, dim=1)
+stableData = stableData.reshape(5000, 2, -1)
+stableData = torch.mean(stableData, dim=1)
+
+
 
 
 # 数据精度，这里是指每次step将提升1/step倍的sigma
@@ -66,7 +60,7 @@ maxZ = 100
 
 # 记录受力门限和角动量门限的数据，第一个是Pd，第二个是Pfa
 records = torch.zeros(step * maxZ, step * maxZ, 2)  # 因为主要用于记录，所以不cuda了
-name = 'Playground1'
+name = 'Playground1Window=2'
 # 尝试各种可能的pair（时间花费基于用户选择的step和maxZ，可能需要不同时间，
 for i in trange(0, maxZ * step):
     for j in range(0, maxZ * step):
@@ -79,4 +73,4 @@ for i in trange(0, maxZ * step):
         records[i][j][0] = Pd
         records[i][j][1] = Pfa
 # 因为运行时间比较久，所以一般先存储结果，之后再分析
-torch.save(records, os.path.join(REPORTADDRESS,name + '.oracleReport'))
+torch.save(records, os.path.join(REPORTADDRESS, name + '.oracleReport'))

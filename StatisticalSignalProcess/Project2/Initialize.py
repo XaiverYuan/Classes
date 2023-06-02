@@ -33,3 +33,19 @@ degreeSigma = data1[:, 1:].std()
 print('Force Std  = %.8f' % forceSigma)
 print('degree Std = %.8f' % degreeSigma)
 
+def classifier(data: torch.tensor, forceGamma: float, degreeGamma: float) -> torch.tensor:
+    """
+    给定数据和门限，判断哪些数据符合所有条件
+    :param data: 待鉴定数据
+    :param forceGamma: 受力与g之间差距的极限容忍值
+    :param degreeGamma: 最大角速度绝对值的极限容忍值
+    :return: 一个布尔张量，测量了数据是否符合条件
+    """
+    # 判定受力是否符合条件
+    forceAccept = torch.bitwise_and(data[:, 0] < g + forceGamma, data[:, 0] > g - forceGamma)
+    # 获取最大角速度
+    maxDegree = torch.max(torch.abs(data[:, 1:]), 1)[0]
+    # 判定角速度是否符合条件
+    degreeAccept = torch.bitwise_and(maxDegree < degreeGamma, maxDegree > -degreeGamma)
+    return torch.bitwise_and(forceAccept, degreeAccept)
+
